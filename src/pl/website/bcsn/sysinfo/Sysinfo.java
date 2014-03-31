@@ -10,7 +10,7 @@ public class Sysinfo extends JavaPlugin {
 	public static Server server;
 	
 
-	/*
+	/* A COMMENT
 	 * (non-Javadoc)
 	 * 
 	 * @see org.bukkit.plugin.java.JavaPlugin#onEnable() PERMISSION NODES:
