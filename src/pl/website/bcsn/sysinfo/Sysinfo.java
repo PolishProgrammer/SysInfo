@@ -26,6 +26,7 @@ public class Sysinfo extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
 		if (cmd.getName().equalsIgnoreCase("sysinfo")) {
+			if (!sender.hasPermission("sysinfo.sysinfo")){
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					("&6&lSystem architecture: &c&o" + System
 							.getProperty("os.arch"))));
@@ -56,6 +57,7 @@ public class Sysinfo extends JavaPlugin {
 					("&6&lClient serverlist MOTD: " + server.getMotd())));
 
 			return true;
+			}
 		}
 
 		return false;
