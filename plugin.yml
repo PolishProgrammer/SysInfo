@@ -8,6 +8,13 @@ main: pl.website.bcsn.sysinfo.Sysinfo
 version: 1.0
 
 commands:
-     sysinfo:
-      description: Returns information about server machine
-      usage: /<command>
+ sysinfo:
+  permission: sysinfo.sysinfo
+  description: Returns information about server machine
+  usage: /<command>
+  permission-message: You do not have <permission>
+permissions:
+ sysinfo.sysinfo:
+  default: false;
+  description: Gives access to /sysinfo
+  
