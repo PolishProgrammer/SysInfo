@@ -15,6 +15,6 @@ commands:
   permission-message: You do not have <permission>
 permissions:
  sysinfo.sysinfo:
-  default: false;
+  default: op;
   description: Gives access to /sysinfo
   
