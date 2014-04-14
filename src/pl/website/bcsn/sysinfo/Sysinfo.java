@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Sysinfo extends JavaPlugin {
 	public static Server server;
 	public final static char asciiBlock = '\u2588';
+	public final static char degSign = '\u00B0';
 
 	/* A COMMENT
 	 * (non-Javadoc)
@@ -63,7 +64,7 @@ public class Sysinfo extends JavaPlugin {
 			//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + getExecOutput("ps -A| grep java")));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + "&2&o&lNot implemented yet."));
 
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lTemp: " + getExecOutput("acpi -t")));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lTemp: " + parseACPI(getExecOutput("acpi -t"))));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lRAM usage" + getRamUsage()));
 
 			return true;
@@ -73,27 +74,47 @@ public class Sysinfo extends JavaPlugin {
 		return false;
 	}
 
+	private String parseACPI(String execOutput) {
+		/*    0   |1 | 2 | 3  |   4   |5
+		 * Thermal 0: ok, 88.0 degrees C
+		 * Thermal 1: ok, 88.0 degrees C
+		 * Sample acpi -t output
+		 * 
+		 * 
+		 * 
+		 */
+		String out = "&b";
+		String[] lines = execOutput.split("\n");
+		for(String s : lines){
+			String[] words = s.split(" ");
+			out += "T" + words[1] + " " + words[3] + degSign+"C ["+words[2]+"]|";
+		}
+		
+		
+		return out;
+	}
+
 	private String getRamUsage() {
 		Runtime runtime = Runtime.getRuntime();
 		long freemem = runtime.freeMemory()/1048576; //in MB
 		long totmem = runtime.maxMemory()/1048576; //in MB
-		System.out.print(freemem + " " + totmem + " " + (float) freemem/totmem);
 		float percent = ((float) freemem/totmem)*100;
-		System.out.println("perc"+ percent);
-		int steps = (int) (percent/10);
-		String ret = "&b[&9&l"+percent+"%&b][&9&l"+freemem+"kB/"+totmem+"kB&b]" + freemem/totmem;
-		String membar = "&r&2";
-		char color = 'c';
-		for(int i = 0; i <= 10; i++){
+		int steps = (int) (percent/5);
+		String ret = "&b[&9&l"+Math.floor(percent)+"%&b][&9&l"+freemem+"MB/"+totmem+"MB&b]";
+		String membar = "\n&r&2";
+		//rendering membar
+		char color = '2'; //red color code (sybolizes used mem)
+		for(int i = 0; i <= 20; i++){
 			if(i >= steps){
-				color='a';
+				color='a'; //green color code (sybolizes unused mem)
 			}
 			membar += "&"+color+asciiBlock;
 		}
-		System.out.println((float) 119/193);
-		return ret + membar;
+		return ret + "["+membar+"]" + (float) percent;
 	}
 
+	
+	
 	private String getExecOutput(String command) {
 		String usage = "&b";
 		try {
