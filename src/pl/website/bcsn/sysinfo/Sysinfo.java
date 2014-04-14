@@ -60,7 +60,9 @@ public class Sysinfo extends JavaPlugin {
 					'&',
 					("&6&lClient serverlist MOTD: " + server.getMotd())));
 
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + getExecOutput("ps -A| grep java")));
+			//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + getExecOutput("ps -A| grep java")));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + "&2&o&lNot implemented yet."));
+
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lTemp: " + getExecOutput("acpi -t")));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lRAM usage" + getRamUsage()));
 
