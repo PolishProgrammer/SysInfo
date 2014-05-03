@@ -1,0 +1,21 @@
+#Main values
+sys-arch: 'System Architecture'
+sys-os: 'Operating System'
+sys-os-version: 'version'
+bukkit-version: 'Bukkit version'
+players: 'Players'
+players-of-max: 'of max'
+server-ip: 'Server IP'
+motd: 'Client serverist MOTD'
+cpu-usage: 'CPU usage'
+temp: 'Temperature'
+ram-usage: 'RAM usage'
+ram-bar: 'RAM'
+
+#other values
+cpu-usage-niy: 'Not implemented yet.'
+command-usage: 'Usage: <usage>'
+
+#alert values
+alert-msg-ram: 'Ram usage is @ram%, over critical level [@crit-ram%]'
+alert-msg-prefix: '&c&l[&a&lSysinfo alarm&c&l] &r&c @msg'

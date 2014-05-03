@@ -1,0 +1,20 @@
+#Main values
+sys-arch: 'Architektura systemu'
+sys-os: 'System operacyjny'
+sys-os-version: 'wersja'
+bukkit-version: 'Wersja silnika'
+players: 'Graczy'
+players-of-max: 'z maksimum'
+server-ip: 'Adres IP serwera'
+motd: 'MOTD serwera'
+cpu-usage: 'Uzycie procesora'
+temp: 'Temperatura'
+ram-usage: 'Uzycie RAMu'
+ram-bar: 'RAM'
+
+#other values
+cpu-usage-niy: 'Niezaimplementowane.'
+command-usage: 'Uzycie: <usage>'
+#alert values
+alert-msg-ram: 'Uzycie RAMu jest rowne &a<ram>%&c,powyzej poziomu alarmu (&a<crit-ram>%&c)!'
+alert-msg-prefix: '&c&l[&a&lAlarm Sysinfo&c&l] &r&c <msg>'

@@ -1,140 +1,248 @@
 package pl.website.bcsn.sysinfo;
 
-import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import pl.website.bcsn.sysinfo.InfoGatherer.infoType;
 
 public class Sysinfo extends JavaPlugin {
 	public static Server server;
 	public final static char asciiBlock = '\u2588';
 	public final static char degSign = '\u00B0';
 
-	/* A COMMENT
-	 * (non-Javadoc)
-	 * 
-	 * @see org.bukkit.plugin.java.JavaPlugin#onEnable() PERMISSION NODES:
-	 * sysinfo.sysinfo - access /sysinfo
-	 */
+	// Pliki konfiguracyjne (locale itp.)
+	public static File localeFile;
+	public static File configFile;
+	public static List<String> locales_names;
+	public static FileConfiguration locale;
+	public static FileConfiguration config;
+
+	public static Thread ramCheckThread;
+
+	@SuppressWarnings("deprecation")
+	public void onDisable() {
+		// saveYamls();
+		ramCheckThread.stop(); // no idea how to better do it :P
+	}
 
 	public void onEnable() {
 		server = getServer();
-		server.getLogger().fine("This is Sysinfo by TheKiwi5000");
+		System.out.println("This is Sysinfo by TheKiwi5000");
+		// saveConfig();
+		/*
+		 * Locale.yml will be currently used file to read language. next to it
+		 * there would be locale-xxx.yml files where xxx is language code (en,
+		 * en-us, pl, de, fr, etc.)
+		 */
+
+		/*
+		 * Thanks to DomovoiButler for his great multi-file config tutorial:
+		 * https
+		 * ://forums.bukkit.org/threads/bukkits-yaml-configuration-tutorial.42770
+		 * /
+		 */
+
+		localeFile = new File(getDataFolder(), "locale.yml"); // locale.yml
+		configFile = new File(getDataFolder(), "config.yml");
+		if (!localeFile.exists()) {
+			localeFile.getParentFile().mkdirs();
+			copy(getResource("locale.yml"), localeFile);
+		}
+		if (!configFile.exists()) {
+			configFile.getParentFile().mkdirs();
+			copy(getResource("config.yml"), configFile);
+		}
+
+		locale = new YamlConfiguration();
+		config = new YamlConfiguration();
+
+		loadYamls();
+		locales_names = config.getStringList("locales");
+		System.out.println(locales_names);
+		for (String s : locales_names) {
+			System.out.println("Added " + s + "locale to list");
+			copy(getResource("locale-" + s + ".yml"), new File(getDataFolder(),
+					"locale-" + s + ".yml"));
+		}
+		AlarmThread thr = new AlarmThread();
+		thr.init();
+		ramCheckThread = new Thread(thr);
+		ramCheckThread.start(); // Starting RAM check thread
+
+	}// end onEnable()
+
+	public void saveYamls() {
+		try {
+			locale.save(localeFile);
+			config.save(configFile);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void loadYamls() {
+		try {
+			locale.load(localeFile);
+			config.load(configFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
-		if (cmd.getName().equalsIgnoreCase("sysinfo") ) {
-
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					("&6&lSystem architecture: &c&o" + System
-							.getProperty("os.arch"))));
-
-			sender.sendMessage(ChatColor.translateAlternateColorCodes(
-					'&',
-					("&6&lOperatring system: &c&o"
-							+ System.getProperty("os.name")
-							+ " &6&lversion &c&o" + System
-							.getProperty("os.version"))
-					)
-					);
-
-			sender.sendMessage(ChatColor.translateAlternateColorCodes(
-					'&',
-					("&6&lBukkit version: &c&o" + server.getBukkitVersion())));
-
-			sender.sendMessage(ChatColor.translateAlternateColorCodes(
-					'&',
-					("&6&lPlayers: &c&o" + server.getOnlinePlayers().length + " &6&lof max &c&o" + server.getMaxPlayers())));
-
-			sender.sendMessage(ChatColor.translateAlternateColorCodes(
-					'&',
-					("&6&lServer IP: &c&o" + server.getIp()+"&6&l:&c&o"+server.getPort())));
-
-			sender.sendMessage(ChatColor.translateAlternateColorCodes(
-					'&',
-					("&6&lClient serverlist MOTD: " + server.getMotd())));
-
-			//sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + getExecOutput("ps -A| grep java")));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + "&2&o&lNot implemented yet."));
-
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lTemp: " + parseACPI(getExecOutput("acpi -t"))));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&a&lRAM usage" + getRamUsage()));
-
-			return true;
+		if (cmd.getName().equalsIgnoreCase("sysinfo")) {
+			if (args.length == 0) {
+				msgSysinfo(sender);
+				return true;
+			}
+			if (args.length > 0) {
+				if (args[0].equalsIgnoreCase("help")){
+					msgHelp(sender);
+					return true;
+				}
+				
+				if (args[0].equalsIgnoreCase("alarm")) { // /sysinfo alarm [...]
+					if (args.length == 1){ // /sysinfo alarm
+						if (InfoGatherer.getRawRamUsage()[0] >= config.getInt("ram-alarm-level")){ //if over crit level
+							senderMSG(locale.getString("ui.alarm.col-bad")+ locale.getString("ui.alarm.ram-usage-bad"), sender);
+							return true;
+						}else{
+							senderMSG(locale.getString("ui.alarm.col-ok")+ locale.getString("ui.alarm.ram-usage-ok"), sender);
+						}
+						return true;
+					}
+					
+					if (args.length == 2){
+						if(args[1].equalsIgnoreCase("level")){ // /sysinfo alarm level
+							String s = locale.getString("ui.alarm.ram-level");
+							s = s.replaceAll("@crit-ram", config.getString("ram-alarm-level"));
+							senderMSG(s, sender);
+							return true;
+						}
+					}
+					
+					if (args.length == 3){
+						if(args[1].equalsIgnoreCase("level")){ // /sysinfo alarm interval value
+							config.options().configuration().set("ram-alarm-level", Integer.valueOf(args[2]));
+							return true;
+						}
+					}else{
+						senderMSG(locale.getString("error.col")+ locale.getString("error.args"), sender);
+						return true;
+					}
+					
+				}
+			}
 		}
-		//}
+		// }
 
 		return false;
 	}
 
-	private String parseACPI(String execOutput) {
-		/*    0   |1 | 2 | 3  |   4   |5
-		 * Thermal 0: ok, 88.0 degrees C
-		 * Thermal 1: ok, 88.0 degrees C
-		 * Sample acpi -t output
-		 * 
-		 * 
-		 * 
-		 */
-		String out = "&b";
-		String[] lines = execOutput.split("\n");
-		for(String s : lines){
-			String[] words = s.split(" ");
-			out += "T" + words[1] + " " + words[3] + degSign+"C ["+words[2]+"]|";
+	private void msgHelp(CommandSender sender) {
+		String c1, c2;
+		c1 = locale.getString("ui.help.col1");
+		c2 = locale.getString("ui.help.col2");
+
+		for(String s : locale.getStringList("ui.help.text")){
+			s = s.replaceAll("@version", getDescription().getVersion());
+			s = s.replaceAll("@command", "sysinfo");
+			s = s.replaceAll("@c1", c1);
+			s = s.replaceAll("@c2", c2);
+
+			
+			senderMSG(s, sender);
 		}
-		
-		
-		return out;
+
 	}
 
-	private String getRamUsage() {
-		Runtime runtime = Runtime.getRuntime();
-		long freemem = runtime.freeMemory()/1048576; //in MB
-		long totmem = runtime.maxMemory()/1048576; //in MB
-		float percent = ((float) freemem/totmem)*100;
-		int steps = (int) (percent/5);
-		String ret = "&b[&9&l"+Math.floor(percent)+"%&b][&9&l"+freemem+"MB/"+totmem+"MB&b]";
-		String membar = "\n&r&2";
-		//rendering membar
-		char color = '2'; //red color code (sybolizes used mem)
-		for(int i = 0; i <= 20; i++){
-			if(i >= steps){
-				color='a'; //green color code (sybolizes unused mem)
-			}
-			membar += "&"+color+asciiBlock;
-		}
-		return ret + "["+membar+"]" + (float) percent;
+	private void msgSysinfo(CommandSender sender) {
+		// Arch
+		senderMSG(
+				"&6" + locale.getString("sys-arch") + ":&c "
+						+ InfoGatherer.getInfo(infoType.SYSTEM_ARCH), sender);
+
+		// system name and version
+		senderMSG(
+				"&6" + locale.getString("sys-os") + ":&c "
+						+ InfoGatherer.getInfo(infoType.SYSTEM_NAME) + " "
+						+ locale.getString("sys-os-version") + " "
+						+ InfoGatherer.getInfo(infoType.SYSTEM_VERSION), sender);
+
+		// bukkit version
+		senderMSG(
+				"&6" + locale.getString("bukkit-version") + ":&c "
+						+ InfoGatherer.getInfo(infoType.BUKKIT_VERSION), sender);
+
+		// players x of max y
+		senderMSG(
+				"&6" + locale.getString("players") + ":&c "
+						+ InfoGatherer.getInfo(infoType.PLAYERS_NOW) + " "
+						+ locale.getString("players-of-max") + " "
+						+ InfoGatherer.getInfo(infoType.PLAYERS_MAX), sender);
+
+		// server ip:port
+		senderMSG(
+				"&6" + locale.getString("server-ip") + ":&c "
+						+ InfoGatherer.getInfo(infoType.SERVER_IP) + ":"
+						+ InfoGatherer.getInfo(infoType.SERVER_PORT), sender);
+
+		// server motd
+		senderMSG("&6"
+				+ locale.getString("motd") + ":&r " // before MOTD formatting
+				// must be removed!
+				+ InfoGatherer.getInfo(infoType.SERVER_EXTERN_MOTD), sender);
+
+		// temp
+		senderMSG(
+				"&6" + locale.getString("temp") + ":&c "
+						+ InfoGatherer.getInfo(infoType.MACHINE_TEMP), sender);
+
+		// ram usage
+		senderMSG(ChatColor.translateAlternateColorCodes(
+				'&',
+				"&6" + locale.getString("ram-usage") + ":&c "
+						+ InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE)), sender);
+
+		// ram bar [#####000000]
+		senderMSG(ChatColor.translateAlternateColorCodes(
+				'&',
+				"&6" + locale.getString("ram-bar") + ":&c "
+						+ InfoGatherer.getInfo(infoType.MACHINE_RAM_GRAPH)), sender);
 	}
 
-	
-	
-	private String getExecOutput(String command) {
-		String usage = "&b";
+	private void senderMSG(String msg, CommandSender sender) {
+		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', msg));
+		
+	}
+
+	private void copy(InputStream in, File file) {
 		try {
-			Process proc = Runtime.getRuntime().exec(command);
-			BufferedReader stdInput = new BufferedReader(new 
-					InputStreamReader(proc.getInputStream()));
-
-			// read the output from the command
-			String s = null;
-			while ((s = stdInput.readLine()) != null) {
-				usage += s + "\n";
+			OutputStream out = new FileOutputStream(file);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
 			}
+			out.close();
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			return ChatColor.translateAlternateColorCodes('&', "&c&l Error while getting value. Please try Again");
-		}
-		if(!System.getProperty("os.name").equals("Linux")){
-			return ChatColor.translateAlternateColorCodes('&', "&c&l Not available on " + System.getProperty("os.name"));
-		}
-		return usage;
 	}
 }
