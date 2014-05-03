@@ -18,3 +18,32 @@ command-usage: 'Uzycie: <usage>'
 #alert values
 alert-msg-ram: 'Uzycie RAMu jest rowne &a<ram>%&c,powyzej poziomu alarmu (&a<crit-ram>%&c)!'
 alert-msg-prefix: '&c&l[&a&lAlarm Sysinfo&c&l] &r&c <msg>'
+#User Intreface
+ui:
+  col1: '&9'
+  col2: '&2'
+  help:
+    col1: '&b&l'
+    col2: '&e'
+    #Pomoc Sysinfo. każdy myślnik to jedna lnia
+    #Uwaga - WCIĘCIA!!! Przed każdym myślnikiem musi byc SZEŚĆ SPACJI!
+    text: 
+      - '@c1Sysinfo @c2v@version'
+      - '@c1/@command @c2 - Informacje o systemie (RAM, temperatura, OS itp.)'
+      - '@c1/@command help@c2 - Pokazuje pomoc'
+      - '@c1/@command alarm@c2 - Pokazuje, czy zuzycie RAMu jest powyzej poziomu alarmu'
+      - '@c1/@command alarm level@c2 - Pokazje poziom alarmu'
+      - '@c1/@command alarm level [val]@c2 - Ustawia poziom alarmu na [val] procent'
+  alarm: 
+    col-ok: '&a'
+    col-bad: '&c'
+    value-set: 'Wartosc ustawiona.'
+    ram-usage-ok: 'Uzycie RAMu OK.'
+    ram-usage-bad: 'Uzycie RAMu powyzej poziomu alarmu!'
+    ram-level: 'Poziom alarmu to @crit-ram%'
+
+#UI errors
+error: 
+  col: '&c'
+  args: 'Blad skladni. Sprawdz pomoc'
+  no-config-path: 'Brak sciezki'

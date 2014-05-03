@@ -1,3 +1,7 @@
+#DO NOT change variable names!!!
+#See here how to add your language:
+# http://dev.bukkit.org/bukkit-plugins/sysinfo/pages/adding-locales/
+
 #Main values
 sys-arch: 'System Architecture'
 sys-os: 'Operating System'
@@ -14,8 +18,38 @@ ram-bar: 'RAM'
 
 #other values
 cpu-usage-niy: 'Not implemented yet.'
-command-usage: 'Usage: <usage>'
+
 
 #alert values
 alert-msg-ram: 'Ram usage is @ram%, over critical level [@crit-ram%]'
 alert-msg-prefix: '&c&l[&a&lSysinfo alarm&c&l] &r&c @msg'
+
+#User Intreface
+ui:
+  col1: '&9'
+  col2: '&2'
+  help:
+    col1: '&b&l'
+    col2: '&e'
+    #Sysifo help text. Each dash equals one line.
+    #Warning - INDENTATION!!! Before every dash there must be 6 (SIX) SPACES!
+    text: 
+      - '@c1Sysinfo @c2v@version'
+      - '@c1/@command @c2 - System information (RAM, temp, OS etc.)'
+      - '@c1/@command help@c2 - Shows this text'
+      - '@c1/@command alarm@c2 - Shows if RAM usage is over critical level'
+      - '@c1/@command alarm level@c2 - Shows critical level'
+      - '@c1/@command alarm level [val]@c2 - Sets critical level to [val]'
+  alarm: 
+    col-ok: '&a'
+    col-bad: '&c'
+    value-set: 'Value set.'
+    ram-usage-ok: 'RAM usage OK'
+    ram-usage-bad: 'RAM usage over critical level!'
+    ram-level: 'Critical RAM level is @crit-ram%'
+
+#UI errors
+error: 
+  col: '&c'
+  args: 'Argument error. See help'
+  no-config-path: 'Path not present'
