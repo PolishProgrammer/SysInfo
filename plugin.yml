@@ -5,7 +5,7 @@ database: false
 prefix: TK5-SYSINFO
 website: http://bcsn.website.pl/kiwikiwi
 main: pl.website.bcsn.sysinfo.Sysinfo
-version: 2.0
+version: 2.2
 
 commands:
  sysinfo:
@@ -17,4 +17,7 @@ permissions:
  sysinfo.sysinfo:
   default: op;
   description: Gives access to /sysinfo
+ sysinfo.alarm-recv:
+  default: op;
+  description: Allows player to receive RAM usage alarm messages.
   
