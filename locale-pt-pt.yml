@@ -1,0 +1,55 @@
+#DO NOT change variable names!!!
+#See here how to add your language:
+# http://dev.bukkit.org/bukkit-plugins/sysinfo/pages/adding-locales/
+
+#Main values
+sys-arch: 'Estrutura do sistema'
+sys-os: 'Sistema Operativo'
+sys-os-version: 'Versão'
+bukkit-version: 'Verão do Bukkit'
+players: 'Jogadores'
+players-of-max: 'de'
+server-ip: 'IP do servidor'
+motd: 'MOTD'
+cpu-usage: 'Uso do CPU'
+temp: 'Temperatura'
+ram-usage: 'Uso de RAM'
+ram-bar: 'RAM'
+
+#other values
+cpu-usage-niy: 'Ainda não foi implementado.'
+
+
+#alert values
+alert-msg-ram: 'O uso de RAM: @ram%, é crítico [@crit-ram%]'
+alert-msg-prefix: '&c&l[&a&lSysInfo alarme&c&l] &r&c @msg'
+
+#User Intreface
+ui:
+  col1: '&9'
+  col2: '&2'
+  help:
+    col1: '&b&l'
+    col2: '&e'
+    #Sysifo help text. Each dash equals one line.
+    #Warning - INDENTATION!!! Before every dash there must be 6 (SIX) SPACES!
+    text: 
+      - '@c1Sysinfo @cVersão @2'
+      - '@c1/@command @c2 - Informação do sistema (RAM, temp, OS etc.)'
+      - '@c1/@command help@c2 - Mostra este texto =P'
+      - '@c1/@command alarm@c2 - Mostra se o uso de RAM está a um nível alarmante'
+      - '@c1/@command alarm level@c2 - Mostra o nível crítico'
+      - '@c1/@command alarm level [val]@c2 - Coloca o nível crítico a [val]'
+  alarm: 
+    col-ok: '&a'
+    col-bad: '&c'
+    value-set: 'Valor definido.'
+    ram-usage-ok: 'Uso de RAM OK'
+    ram-usage-bad: 'Uso de RAM está a um nível alarmante!'
+    ram-level: 'O nível crítico de RAM é de @crit-ram%'
+
+#UI errors
+error: 
+  col: '&c'
+  args: 'Erro de argumento. Vê ajuda'
+  no-config-path: 'Argumento não está presente'

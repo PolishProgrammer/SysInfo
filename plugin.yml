@@ -1,11 +1,11 @@
 name: Sysinfo
-description: Adds functionality to strike player with lightning and ban him.
+description: Powerful system administration tool. Allows user to look up server's OS, temp, RAM usage and to execute RAM freeing method.
 author: TheKiwi5000
 database: false
 prefix: TK5-SYSINFO
 website: http://bcsn.website.pl/kiwikiwi
 main: pl.website.bcsn.sysinfo.Sysinfo
-version: 2.2
+version: 2.2.1
 
 commands:
  sysinfo:
@@ -20,4 +20,10 @@ permissions:
  sysinfo.alarm-recv:
   default: op;
   description: Allows player to receive RAM usage alarm messages.
-  
+ sysinfo.alarm-set:
+  default: op;
+  description: Allows player to set RAM alarm level and checking interval.
+ sysinfo.exec-gc:
+  default: op;
+  description: Allows player to execute RAM freeing sequence.
+ 

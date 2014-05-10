@@ -39,7 +39,7 @@ public class Sysinfo extends JavaPlugin {
 
 	public void onEnable() {
 		server = getServer();
-		System.out.println("This is Sysinfo by TheKiwi5000");
+		//System.out.println("This is Sysinfo by TheKiwi5000");
 		// saveConfig();
 		/*
 		 * Locale.yml will be currently used file to read language. next to it
@@ -80,6 +80,7 @@ public class Sysinfo extends JavaPlugin {
 		thr.init();
 		ramCheckThread = new Thread(thr);
 		ramCheckThread.start(); // Starting RAM check thread
+		System.out.println("Starting RAM check thread.");
 
 	}// end onEnable()
 
@@ -117,18 +118,18 @@ public class Sysinfo extends JavaPlugin {
 				}
 				
 				if (args[0].equalsIgnoreCase("alarm")) { // /sysinfo alarm [...]
-					if (args.length == 1){ // /sysinfo alarm
+					if (args.length == 1 && sender.hasPermission("sysinfo.alarm-recv")){ // /sysinfo alarm
 						if (InfoGatherer.getRawRamUsage()[0] >= config.getInt("ram-alarm-level")){ //if over crit level
 							senderMSG(locale.getString("ui.alarm.col-bad")+ locale.getString("ui.alarm.ram-usage-bad"), sender);
 							return true;
-						}else{
+						}else{ //if not
 							senderMSG(locale.getString("ui.alarm.col-ok")+ locale.getString("ui.alarm.ram-usage-ok"), sender);
 						}
 						return true;
 					}
 					
 					if (args.length == 2){
-						if(args[1].equalsIgnoreCase("level")){ // /sysinfo alarm level
+						if(args[1].equalsIgnoreCase("level") && sender.hasPermission("sysinfo.alarm-recv")){ // /sysinfo alarm level
 							String s = locale.getString("ui.alarm.ram-level");
 							s = s.replaceAll("@crit-ram", config.getString("ram-alarm-level"));
 							senderMSG(s, sender);
@@ -137,7 +138,7 @@ public class Sysinfo extends JavaPlugin {
 					}
 					
 					if (args.length == 3){
-						if(args[1].equalsIgnoreCase("level")){ // /sysinfo alarm interval value
+						if(args[1].equalsIgnoreCase("level") && sender.hasPermission("sysinfo.alarm-set")){ // /sysinfo alarm level value
 							config.options().configuration().set("ram-alarm-level", Integer.valueOf(args[2]));
 							return true;
 						}
@@ -146,6 +147,11 @@ public class Sysinfo extends JavaPlugin {
 						return true;
 					}
 					
+				}else if((args[0].equalsIgnoreCase("gc") || args[0].equalsIgnoreCase("freemem")) && sender.hasPermission("sysinfo.exec-gc") ){
+					sender.sendMessage("WARNING:  Experimental feature! Please report performance information (Ram before, ram after)!");
+					sender.sendMessage("BEFORE: "+InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE));
+					System.gc(); //Garbage collecting
+					sender.sendMessage("AFTER:  "+InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE));
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-locales: [pl, en]
+locales: [pl, en, pt-pt]
 
 #The amount in seconds beetween ram checks
 #default = 600 [10 min]

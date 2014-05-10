@@ -40,6 +40,8 @@ ui:
       - '@c1/@command alarm@c2 - Shows if RAM usage is over critical level'
       - '@c1/@command alarm level@c2 - Shows critical level'
       - '@c1/@command alarm level [val]@c2 - Sets critical level to [val]'
+      - '@c1/@command gc@c2 - Performs GarbageCollection method, which can free up to 10% of RAM'
+      - '@c1/@command freemem@c2 - Alias for /@command gc'
   alarm: 
     col-ok: '&a'
     col-bad: '&c'
