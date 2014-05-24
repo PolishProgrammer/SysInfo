@@ -36,10 +36,10 @@ ui:
     text: 
       - '@c1Sysinfo @cVersão @2'
       - '@c1/@command @c2 - Informação do sistema (RAM, temp, OS etc.)'
-      - '@c1/@command help@c2 - Mostra este texto =P'
-      - '@c1/@command alarm@c2 - Refere se o uso de RAM está a um nível alarmante'
-      - '@c1/@command alarm level@c2 - Mostra o nível crítico'
-      - '@c1/@command alarm level [val]@c2 - Coloca o nível crítico a [val]'
+      - '@c1/@command help@c2 - Mostra esse texto =P'
+      - '@c1/@command alarm@c2 - Informa se o uso de RAM está a um nível alarmante'
+      - '@c1/@command alarm level@c2 - Mostra o nível limite de alarme'
+      - '@c1/@command alarm level [val]@c2 - Define o nível de alarme a [val]'
   alarm: 
     col-ok: '&a'
     col-bad: '&c'
@@ -51,5 +51,5 @@ ui:
 #UI errors
 error: 
   col: '&c'
-  args: 'Erro de argumento. Vê ajuda'
+  args: 'Erro de argumento. Procure ajuda'
   no-config-path: 'Argumento não existe'
