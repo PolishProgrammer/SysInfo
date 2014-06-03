@@ -3,8 +3,22 @@ locales: [pl, en, pt-pt, pt-br, fr]
 #The amount in seconds beetween ram checks
 #default = 600 [10 min]
 ram-check-interval: 600
+
 #the percentage level of ram usage needed to trigger the alarm
 #ex.: 50 here will trigger alarm (send message to players 
-#with sysinfo.alarm-recv permission) if RAM usage will be over 50%
+#with sysinfo.alarm-recv permission AND clear if we enable clearing) if RAM usage will be over 50%
 #default = 90
 ram-alarm-level: 90
+auto-gc: true
+
+#should we record the ram usage?
+#default=true
+recorder:
+  #is this on? default=true
+  enabled: true
+  #whats the name of record file? default = ram-record.txt
+  filename: ram-record.txt
+  #logging interval, in minutes!; default = 30
+  interval: 30
+  splitter: '|'
+

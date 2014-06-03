@@ -13,15 +13,22 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import pl.website.bcsn.sysinfo.InfoGatherer.infoType;
 
 public class Sysinfo extends JavaPlugin {
+	
+	
+	public static Sysinfo instance = new Sysinfo();
 	public static Server server;
 	public final static char asciiBlock = '\u2588';
 	public final static char degSign = '\u00B0';
-
+	
+	public static File dataFolder;
+	
+	
 	// Pliki konfiguracyjne (locale itp.)
 	public static File localeFile;
 	public static File configFile;
@@ -30,15 +37,18 @@ public class Sysinfo extends JavaPlugin {
 	public static FileConfiguration config;
 
 	public static Thread ramCheckThread;
+	public static Thread recorderThread;
 
 	@SuppressWarnings("deprecation")
 	public void onDisable() {
 		// saveYamls();
 		ramCheckThread.stop(); // no idea how to better do it :P
+		recorderThread.stop();
 	}
 
 	public void onEnable() {
 		server = getServer();
+		instance = new Sysinfo();
 		//System.out.println("This is Sysinfo by TheKiwi5000");
 		// saveConfig();
 		/*
@@ -53,7 +63,10 @@ public class Sysinfo extends JavaPlugin {
 		 * ://forums.bukkit.org/threads/bukkits-yaml-configuration-tutorial.42770
 		 * /
 		 */
-
+		dataFolder = getDataFolder();
+		
+		
+		
 		localeFile = new File(getDataFolder(), "locale.yml"); // locale.yml
 		configFile = new File(getDataFolder(), "config.yml");
 		if (!localeFile.exists()) {
@@ -76,11 +89,20 @@ public class Sysinfo extends JavaPlugin {
 			copy(getResource("locale-" + s + ".yml"), new File(getDataFolder(),
 					"locale-" + s + ".yml"));
 		}
-		AlarmThread thr = new AlarmThread();
-		thr.init();
-		ramCheckThread = new Thread(thr);
+		
+		
+		
+		AlarmThread aThr = new AlarmThread();
+		aThr.init();
+		ramCheckThread = new Thread(aThr);
 		ramCheckThread.start(); // Starting RAM check thread
 		System.out.println("Starting RAM check thread.");
+		
+		
+		RecorderThread rThr = new RecorderThread();
+		rThr.init();
+		recorderThread = new Thread(rThr);
+		recorderThread.start();
 
 	}// end onEnable()
 
@@ -103,7 +125,30 @@ public class Sysinfo extends JavaPlugin {
 		}
 
 	}
+	private void copy(InputStream in, File file) {
+		try {
+			OutputStream out = new FileOutputStream(file);
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			out.close();
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public boolean onCommand(CommandSender sender, Command cmd, String label,
 			String[] args) {
 		if (cmd.getName().equalsIgnoreCase("sysinfo")) {
@@ -152,6 +197,7 @@ public class Sysinfo extends JavaPlugin {
 					sender.sendMessage("BEFORE: "+InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE));
 					System.gc(); //Garbage collecting
 					sender.sendMessage("AFTER:  "+InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE));
+					
 				}
 			}
 		}
@@ -159,7 +205,27 @@ public class Sysinfo extends JavaPlugin {
 
 		return false;
 	}
-
+	
+	
+	
+	
+	public static void collectGarbage(CommandSender cs) {
+		
+		cs.sendMessage("WARNING:  Experimental feature! Please report performance information (Ram before, ram after)!");
+		cs.sendMessage("BEFORE: "+InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE));
+		System.gc(); //Garbage collecting
+		cs.sendMessage("AFTER:  "+InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE));
+	}
+	
+	/*
+	 * I had to make a PASSIVE method for mesaging.
+	 */
+	public static void msgPlayer(String playername, String msg){
+		Player p = Sysinfo.instance.getServer().getPlayerExact(playername);
+		
+		p.sendMessage(msg);
+	}
+	
 	private void msgHelp(CommandSender sender) {
 		String c1, c2;
 		c1 = locale.getString("ui.help.col1");
@@ -237,18 +303,12 @@ public class Sysinfo extends JavaPlugin {
 		
 	}
 
-	private void copy(InputStream in, File file) {
-		try {
-			OutputStream out = new FileOutputStream(file);
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-			out.close();
-			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	
+	public static  void log(String msg){
+		System.out.println("["+"DUPA"+"]"+msg);
 	}
+	
+	
+	
+	
 }
