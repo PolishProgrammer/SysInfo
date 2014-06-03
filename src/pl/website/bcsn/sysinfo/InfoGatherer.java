@@ -22,7 +22,8 @@ public class InfoGatherer {
 		MACHINE_CPU_USAGE,   //NOT IMPLEMENTED
 		MACHINE_TEMP, //with ACPI support only
 		MACHINE_RAM_USAGE,
-		MACHINE_RAM_GRAPH
+		MACHINE_RAM_GRAPH,
+		MACHINE_RAW_RAM_USAGE
 		//INTERNAL_ERROR //in case of error in getInfo, this is returned
 	};
 
@@ -46,13 +47,22 @@ public class InfoGatherer {
 		
 		case MACHINE_RAM_GRAPH: return getRamUsageBar();
 		case MACHINE_RAM_USAGE: return getRamUsage();
-		
+		case MACHINE_RAW_RAM_USAGE: return getRawRamUsageAsStr();
 
 
 		default: return "error";
 		}
 
 
+	}
+
+	private static String getRawRamUsageAsStr() {
+		String s = "";
+		int[] arr = getRawRamUsage();
+		for(int i : arr){
+			s += i + "|";
+		}
+		return s;
 	}
 
 	private static String getTemp() {

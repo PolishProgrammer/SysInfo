@@ -47,9 +47,17 @@ ui:
     ram-usage-ok: 'RAM usage OK'
     ram-usage-bad: 'RAM usage over critical level!'
     ram-level: 'Critical RAM level is @crit-ram%'
+    ram-auto-clearing: 'Clearing RAM'
+    ram-auto-cleared: 'Done! Dropped from @before% to @after%'
 
 #UI errors
 error: 
   col: '&c'
   args: 'Argument error. See help'
   no-config-path: 'Path not present'
+  
+#Logging & Recording
+log: 
+  config-error: 'Config Error! Is it valid?'
+record: 
+  log-prefix: '[Recorder] '
