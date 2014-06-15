@@ -18,7 +18,7 @@ public class RecorderThread implements Runnable{
 	public void run() {
 		while(true){
 			
-			String s = "xxx";
+			String s = "";
 			s += Sysinfo.locale.getString("record.log-prefix");
 			s += Sysinfo.locale.getString("ram-usage");
 			s += ":";
@@ -43,7 +43,7 @@ public class RecorderThread implements Runnable{
 				file.createNewFile();
 				file.setWritable(true);
 			}
-			Sysinfo.log("piszemy:" + informationLine());
+			Sysinfo.log("Writing:" + informationLine());
 			out.write(informationLine().getBytes());
 			out.write("\n".getBytes()); //Write line feed
 			

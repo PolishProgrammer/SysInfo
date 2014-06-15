@@ -47,6 +47,15 @@ public class Sysinfo extends JavaPlugin {
 	}
 
 	public void onEnable() {
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		server = getServer();
 		instance = new Sysinfo();
 		//System.out.println("This is Sysinfo by TheKiwi5000");
