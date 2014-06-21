@@ -21,7 +21,7 @@ import pl.website.bcsn.sysinfo.InfoGatherer.infoType;
 public class Sysinfo extends JavaPlugin {
 	
 	
-	public static Sysinfo instance = new Sysinfo();
+	public static Sysinfo instance;
 	public static Server server;
 	public final static char asciiBlock = '\u2588';
 	public final static char degSign = '\u00B0';
@@ -57,7 +57,7 @@ public class Sysinfo extends JavaPlugin {
 		}
 		
 		server = getServer();
-		instance = new Sysinfo();
+		instance = (Sysinfo) this.getServer().getPluginManager().getPlugin(this.getName());
 		//System.out.println("This is Sysinfo by TheKiwi5000");
 		// saveConfig();
 		/*
