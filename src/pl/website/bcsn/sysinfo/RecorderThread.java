@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class RecorderThread implements Runnable{
+import org.bukkit.scheduler.BukkitRunnable;
+
+public class RecorderThread extends BukkitRunnable{
 	
 	boolean enabled = false;
 	int interval = 30;
@@ -16,7 +18,7 @@ public class RecorderThread implements Runnable{
 	String splitter = "|";
 	@Override
 	public void run() {
-		while(true){
+		
 			
 			String s = "";
 			s += Sysinfo.locale.getString("record.log-prefix");
@@ -24,15 +26,11 @@ public class RecorderThread implements Runnable{
 			s += ":";
 			s += InfoGatherer.getRawRamUsage()[0];
 			
-			Sysinfo.log(s);
+			Sysinfo.instance.getLogger().info(s);
 			record();
 			
-			try {
-				Thread.sleep(interval*60*1000); //sleep for <interval> minutes
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+			
+		
 		
 	}
 
@@ -43,7 +41,7 @@ public class RecorderThread implements Runnable{
 				file.createNewFile();
 				file.setWritable(true);
 			}
-			Sysinfo.log("Writing:" + informationLine());
+			Sysinfo.instance.getLogger().info("Writing: "+informationLine());
 			out.write(informationLine().getBytes());
 			out.write("\n".getBytes()); //Write line feed
 			
@@ -60,26 +58,7 @@ public class RecorderThread implements Runnable{
 		StringBuilder sb = new StringBuilder(str);
 		GregorianCalendar gc = new GregorianCalendar();
 		Date d = gc.getTime();
-		
-//		sb.append(d.getYear());
-//		sb.append(splitter);
-//		sb.append(d.getMonth());
-//		sb.append(splitter);
-//		sb.append(d.getDay());
-//		sb.append(splitter);
-//		sb.append(d.getHours());
-//		sb.append(splitter);
-//		sb.append(d.getMinutes());
-//		sb.append(splitter);
-//		sb.append(d.getSeconds());
-//		sb.append(splitter);
-//		sb.append(InfoGatherer.getRawRamUsage()[0]);
-//		sb.append(splitter);
-//		sb.append(InfoGatherer.getRawRamUsage()[1]);
-//		sb.append(splitter);
-//		sb.append(InfoGatherer.getRawRamUsage()[2]);
-		
-		
+	
 		sb.append(d.toGMTString());
 		sb.append(splitter);
 		sb.append(InfoGatherer.getRawRamUsage()[0]);

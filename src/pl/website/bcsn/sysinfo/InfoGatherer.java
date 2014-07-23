@@ -20,6 +20,7 @@ public class InfoGatherer {
 		SERVER_PORT,
 		SERVER_EXTERN_MOTD,
 		MACHINE_CPU_USAGE,   //NOT IMPLEMENTED
+		MACHINE_CPU_CORES,
 		MACHINE_TEMP, //with ACPI support only
 		MACHINE_RAM_USAGE,
 		MACHINE_RAM_GRAPH,
@@ -43,6 +44,7 @@ public class InfoGatherer {
 		case SERVER_EXTERN_MOTD: return Sysinfo.server.getMotd();
 
 		case MACHINE_CPU_USAGE: return ChatColor.translateAlternateColorCodes('&', "&a&lCPU usage: " + "&2&o&lNot implemented yet.");
+		case MACHINE_CPU_CORES: return Runtime.getRuntime().availableProcessors() + "X";
 		case MACHINE_TEMP: return getTemp();
 		
 		case MACHINE_RAM_GRAPH: return getRamUsageBar();

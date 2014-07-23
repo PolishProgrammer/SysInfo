@@ -2,8 +2,9 @@ package pl.website.bcsn.sysinfo;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
-public class AlarmThread implements Runnable {
+public class AlarmThread extends BukkitRunnable {
 	private int interval = 60;
 	private int triggerValue = 90;
 	private boolean automaticGC = false;
@@ -20,7 +21,7 @@ public class AlarmThread implements Runnable {
 
 	@Override
 	public void run() {
-		while(true){
+		//while(true){
 			int rambefore = InfoGatherer.getRawRamUsage()[0];
 			if (InfoGatherer.getRawRamUsage()[0] >= triggerValue){
 				sendMessages();
@@ -36,13 +37,13 @@ public class AlarmThread implements Runnable {
 					}
 				}
 			}
-			try {
-				Thread.sleep(interval*1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//			try {
+//				Thread.sleep(interval*1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		//}
 	}
 
 	private void sendMessages() {
