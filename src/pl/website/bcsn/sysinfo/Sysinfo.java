@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -36,8 +37,10 @@ public class Sysinfo extends JavaPlugin {
 	public static List<String> locales_names;
 	public static FileConfiguration locale;
 	public static FileConfiguration config;
-
-
+	
+	public static HashMap<String, Integer> playerSessions = new HashMap<String, Integer>();
+	
+	
 	public void onDisable() {
 		saveYamls();
 
@@ -56,7 +59,7 @@ public class Sysinfo extends JavaPlugin {
 
 		server = getServer();
 		instance = (Sysinfo) this.getServer().getPluginManager().getPlugin(this.getName());
-		//System.out.println("This is Sysinfo by TheKiwi5000");
+		
 		// saveConfig();
 		/*
 		 * Locale.yml will be currently used file to read language. next to it
@@ -111,7 +114,12 @@ public class Sysinfo extends JavaPlugin {
 
 		rThr.runTaskTimer(this, 20L, (long) config.getInt("recorder.interval")*20*60);
 		getLogger().info("Starting RAM logging task!");
-
+		
+		getServer().getPluginManager().registerEvents(new Listeners(), instance);
+		
+		PlayerInfoThread piThr = new PlayerInfoThread();
+		piThr.runTaskTimer(instance, 0, 20); //every 20 ticks
+		
 	}// end onEnable()
 
 	public void saveYamls() {
@@ -206,6 +214,11 @@ public class Sysinfo extends JavaPlugin {
 					System.gc(); //Garbage collecting
 					sender.sendMessage("AFTER:  "+InfoGatherer.getInfo(infoType.MACHINE_RAM_USAGE));
 
+				}
+				
+				if (args[0].equalsIgnoreCase("players")){
+					sender.sendMessage(InfoGatherer.getInfo(infoType.PLAYERS_INFO));
+					return true;
 				}
 			}
 		}

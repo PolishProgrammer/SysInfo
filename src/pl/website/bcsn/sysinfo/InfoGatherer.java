@@ -16,6 +16,7 @@ public class InfoGatherer {
 		BUKKIT_VERSION,
 		PLAYERS_NOW,
 		PLAYERS_MAX,
+		PLAYERS_INFO,
 		SERVER_IP,
 		SERVER_PORT,
 		SERVER_EXTERN_MOTD,
@@ -24,8 +25,9 @@ public class InfoGatherer {
 		MACHINE_TEMP, //with ACPI support only
 		MACHINE_RAM_USAGE,
 		MACHINE_RAM_GRAPH,
-		MACHINE_RAW_RAM_USAGE
-		//INTERNAL_ERROR //in case of error in getInfo, this is returned
+		MACHINE_RAW_RAM_USAGE,
+		MACHINE_UPLOAD,
+		MACHINE_DOWNLOAD
 	};
 
 	public static String getInfo(infoType type){
@@ -38,7 +40,8 @@ public class InfoGatherer {
 
 		case PLAYERS_NOW: return Sysinfo.server.getOnlinePlayers().length + ""; // + "" is a fast toString()
 		case PLAYERS_MAX: return Sysinfo.server.getMaxPlayers() + "";
-
+		case PLAYERS_INFO: return Util.getPlayerSessions();
+		
 		case SERVER_IP: return Sysinfo.server.getIp();
 		case SERVER_PORT: return Sysinfo.server.getPort() + "";
 		case SERVER_EXTERN_MOTD: return Sysinfo.server.getMotd();
